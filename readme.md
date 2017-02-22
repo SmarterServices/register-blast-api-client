@@ -1,8 +1,8 @@
-# assessmentCacheLoop
+# register-blast-api-client
 ## Introduction
 
 
-This script loops published assessments and sends them off to cache endpoint
+This lib is used as a wrapper around api calls to register blast api
 
 ## Installation
 
@@ -10,19 +10,18 @@ This script loops published assessments and sends them off to cache endpoint
 
 NODE v4.0 or higher
 
-GULP installed globally
 ### Install Process
 npm install
 
 ### Configuration
-
-N/A
+	var clientLib = require('register-blast-api-client')
+	var client = new clientLib({url:'baseUrl',token:'auth token'})
 
 ## Running Application/Code
 
 ### Running Locally
 
-node index.js
+gulp test to run tests.
 ### Running in Production
 
 N/A
