@@ -16,6 +16,11 @@ npm install
 ### Configuration
 	var clientLib = require('register-blast-api-client')
 	var client = new clientLib({url:'baseUrl',token:'auth token'})
+	client.cancelAppointment(campusKey,appointmentId)
+	client.getAppointmentDetails(campusKey,appointmentId)
+	client.getCampusDetails(campusKey)
+
+	//All of the above are promises
 
 ## Running Application/Code
 
