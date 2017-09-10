@@ -4,14 +4,11 @@ var setUpMock = function(url) {
   //success
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/correctCampusKey/appointments/correctId/cancel')
-    .reply(200, { cancel: 'success' });
+    .reply(200, 'done');
   // bad token
   nock(url, { reqheaders: { authorization: 'Basic wrongToken' } })
     .get('/campus/correctCampusKey/appointments/correctId/cancel')
-    .reply(401, {
-      cancel: 'error',
-      message: 'This registration may not be canceled online at this time.'
-    });
+    .reply(401, <html></html>);
   //bad campus key
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/wrongCampusKey/appointments/correctId/cancel')
