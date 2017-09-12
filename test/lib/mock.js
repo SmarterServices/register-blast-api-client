@@ -31,13 +31,13 @@ const setUpMock = function (url) {
     });
   //cancelAppointment mocks
   //success
-  nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
+  nock(url)
     .get('/campus/correctCampusKey/appointments/correctId/cancel')
-    .reply(200, 'done');
+    .reply(200, { cancel: 'success' });
   // bad token
   nock(url, { reqheaders: { authorization: 'Basic wrongToken' } })
     .get('/campus/correctCampusKey/appointments/correctId/cancel')
-    .reply(401, <html></html>);
+    .reply(401, { cancel: 'error', message: 'Unexpected' });
   //bad campus key
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/wrongCampusKey/appointments/correctId/cancel')
