@@ -1,5 +1,34 @@
-var nock = require('nock');
-var setUpMock = function(url) {
+'use strict';
+
+const qs = require('qs');
+const nock = require('nock');
+const setUpMock = function (url) {
+  //login mocks
+  nock(url)
+    .persist()
+    .post('/login')
+    .reply(function (url, requestBody) {
+      const body = qs.parse(requestBody)
+      const isValidApiKey = this.req.headers['apikey'] === 'valid';
+      const isValidLogin = body.username === 'admin' && body.password === 'password';
+
+      if (!isValidApiKey) {
+        return [200, {
+          success: false,
+          error: "Invalid client"
+        }]
+      } else if (!isValidLogin) {
+        return [200, {
+          success: false,
+          error: "Invalid login"
+        }]
+      } else {
+        return [200, {
+          success: true,
+          token: 'correctToken'
+        }]
+      }
+    });
   //cancelAppointment mocks
   //success
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
