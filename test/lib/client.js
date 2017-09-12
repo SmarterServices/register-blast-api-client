@@ -1,15 +1,45 @@
+'use strict';
+
 console.log('loaded');
-var testVars = {
-  campusKey: { pass: 'correctCampusKey', fail: 'wrongCampusKey' },
-  appointmentId: { pass: 'correctId', fail: 'wrongId' },
-  token: { pass: 'correctToken', fail: 'wrongToken' }
-};
+var testVars = require('./../data');
+
 var assert = require('chai').assert,
   expect = require('chai').expect,
-  client = require('../../index'),
+  Client = require('../../index'),
   url = 'http://localhost:8000';
 require('./mock')(url);
 describe('testing client lib for registerBlast endpoints', () => {
+  describe('Login', function testLogin() {
+    it('Should successfully login and return valid token', function() {
+      var client = new Client(testVars.config.valid);
+
+      return client
+        .login()
+        .catch(error => {
+          expect(error).to.equal(undefined);
+        })
+    });
+
+    it('Should fail for invalid api key', function() {
+      var client = new Client(testVars.config.invalidApiKey);
+
+      return client
+        .login()
+        .catch(error => {
+          expect(error).to.eql('Login failed');
+        })
+    });
+
+    it('Should fail for invalid credentials', function() {
+      var client = new Client(testVars.config.invalidCredential);
+
+      return client
+        .login()
+        .catch(error => {
+          expect(error).to.eql('Login failed');
+        })
+    });
+  });
   describe('Should test cancelAppointment method', () => {
     it('Should work correctly', done => {
       var c = new client({ url: url, token: testVars.token.pass });
