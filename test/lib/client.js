@@ -1,22 +1,51 @@
+'use strict';
+
 console.log('loaded');
-var testVars = {
-  campusKey: { pass: 'correctCampusKey', fail: 'wrongCampusKey' },
-  appointmentId: { pass: 'correctId', fail: 'wrongId' },
-  token: { pass: 'correctToken', fail: 'wrongToken' }
-};
+var testVars = require('./../data');
+
 var assert = require('chai').assert,
   expect = require('chai').expect,
-  client = require('../../index'),
+  Client = require('../../index'),
   url = 'http://localhost:8000';
 require('./mock')(url);
 describe('testing client lib for registerBlast endpoints', () => {
+  describe('Login', function testLogin() {
+    it('Should successfully login and return valid token', function() {
+      var client = new Client(testVars.config.valid);
+
+      return client
+        .login()
+        .catch(error => {
+          expect(error).to.equal(undefined);
+        })
+    });
+
+    it('Should fail for invalid api key', function() {
+      var client = new Client(testVars.config.invalidApiKey);
+
+      return client
+        .login()
+        .catch(error => {
+          expect(error).to.eql('Login failed');
+        })
+    });
+
+    it('Should fail for invalid credentials', function() {
+      var client = new Client(testVars.config.invalidCredential);
+
+      return client
+        .login()
+        .catch(error => {
+          expect(error).to.eql('Login failed');
+        })
+    });
+  });
   describe('Should test cancelAppointment method', () => {
-    it('Should work correctly', done => {
-      var c = new client({ url: url, token: testVars.token.pass });
-      c
+    it('Should work correctly', (done) => {
+      var client = new Client(testVars.config.valid);
+      client
         .cancelAppointment(testVars.campusKey.pass, testVars.appointmentId.pass)
-        .then(res => {
-          var result = JSON.parse(res);
+        .then(result => {
           expect(result).to.have.property('cancel');
           expect(result.cancel).to.equal('success');
           done();
@@ -27,8 +56,8 @@ describe('testing client lib for registerBlast endpoints', () => {
         });
     });
     it('Should fail because of client side validation', done => {
-      var c = new client({ url: url, token: testVars.token.pass });
-      c
+      var client = new Client(testVars.config.valid);
+      client
         .cancelAppointment(1231, testVars.appointmentId.pass)
         .then(res => {
           console.log(res);
@@ -39,31 +68,13 @@ describe('testing client lib for registerBlast endpoints', () => {
           done();
         });
     });
-    it('Should fail because of bad token', done => {
-      var c = new client({ url: url, token: testVars.token.fail });
-      c
-        .cancelAppointment(testVars.campusKey.pass, testVars.appointmentId.pass)
-        .then(res => {
-        })
-        .catch(e => {
-          var result = JSON.parse(e);
-          expect(result).to.have.property('cancel');
-          expect(result).to.have.property('message');
-          expect(result.cancel).to.equal('error');
-          expect(
-            result.message
-          ).to.equal('This registration may not be canceled online at this time.');
-          done();
-        });
-    });
     it('Should fail because of bad campus key', done => {
-      var c = new client({ url: url, token: testVars.token.pass });
-      c
+      var client = new Client(testVars.config.valid);
+      client
         .cancelAppointment(testVars.campusKey.fail, testVars.appointmentId.pass)
         .then(res => {
         })
-        .catch(e => {
-          var result = JSON.parse(e);
+        .catch(result => {
           expect(result).to.have.property('cancel');
           expect(result).to.have.property('message');
           expect(result.cancel).to.equal('error');
@@ -74,13 +85,12 @@ describe('testing client lib for registerBlast endpoints', () => {
         });
     });
     it('Should fail because of bad appointment Id', done => {
-      var c = new client({ url: url, token: testVars.token.pass });
-      c
+      var client = new Client(testVars.config.valid);
+      client
         .cancelAppointment(testVars.campusKey.pass, testVars.appointmentId.fail)
         .then(res => {
         })
-        .catch(e => {
-          var result = JSON.parse(e);
+        .catch(result => {
           expect(result).to.have.property('cancel');
           expect(result).to.have.property('message');
           expect(result.cancel).to.equal('error');
@@ -93,8 +103,8 @@ describe('testing client lib for registerBlast endpoints', () => {
   });
   describe('Should test getAppointmentDetails method', () => {
     it('Should work correctly', done => {
-      var c = new client({ url: url, token: testVars.token.pass });
-      c
+      var client = new Client({ url: url, token: testVars.token.pass });
+      client
         .getAppointmentDetails(
           testVars.campusKey.pass,
           testVars.appointmentId.pass
@@ -115,8 +125,8 @@ describe('testing client lib for registerBlast endpoints', () => {
         });
     });
     it('Should fail because of client side validation', done => {
-      var c = new client({ url: url, token: testVars.token.pass });
-      c
+      var client = new Client({ url: url, token: testVars.token.pass });
+      client
         .getAppointmentDetails(testVars.campusKey.pass, 234235)
         .then(res => {
           console.log('THIS IS RES', res);
@@ -128,8 +138,8 @@ describe('testing client lib for registerBlast endpoints', () => {
         });
     });
     it('Should fail because of bad token', done => {
-      var c = new client({ url: url, token: testVars.token.fail });
-      c
+      var client = new Client({ url: url, token: testVars.token.fail });
+      client
         .getAppointmentDetails(
           testVars.campusKey.pass,
           testVars.appointmentId.pass
@@ -143,8 +153,8 @@ describe('testing client lib for registerBlast endpoints', () => {
         });
     });
     it('Should fail because of bad campus key', done => {
-      var c = new client({ url: url, token: testVars.token.pass });
-      c
+      var client = new Client({ url: url, token: testVars.token.pass });
+      client
         .getAppointmentDetails(
           testVars.campusKey.fail,
           testVars.appointmentId.pass
@@ -158,8 +168,8 @@ describe('testing client lib for registerBlast endpoints', () => {
         });
     });
     it('Should fail because of bad appointment Id', done => {
-      var c = new client({ url: url, token: testVars.token.pass });
-      c
+      var client = new Client({ url: url, token: testVars.token.pass });
+      client
         .getAppointmentDetails(
           testVars.campusKey.pass,
           testVars.appointmentId.fail
@@ -175,8 +185,8 @@ describe('testing client lib for registerBlast endpoints', () => {
   });
   describe('Should test getAppointmentDetails method', () => {
     it('Should work correctly', done => {
-      var c = new client({ url: url, token: testVars.token.pass });
-      c.getCampusDetails(testVars.campusKey.pass).then(res => {
+      var client = new Client({ url: url, token: testVars.token.pass });
+      client.getCampusDetails(testVars.campusKey.pass).then(res => {
         var result = JSON.parse(res);
         expect(result).to.have.property('name');
         expect(result).to.have.property('address');
@@ -193,8 +203,8 @@ describe('testing client lib for registerBlast endpoints', () => {
       });
     });
     it('Should fail because of client side validation', done => {
-      var c = new client({ url: url, token: 23423 });
-      c
+      var client = new Client({ url: url, token: 23423 });
+      client
         .getCampusDetails(testVars.campusKey.pass)
         .then(res => {
           console.log(res);
@@ -206,8 +216,8 @@ describe('testing client lib for registerBlast endpoints', () => {
         });
     });
     it('Should fail because of bad token', done => {
-      var c = new client({ url: url, token: testVars.token.fail });
-      c
+      var client = new Client({ url: url, token: testVars.token.fail });
+      client
         .getCampusDetails(testVars.campusKey.pass)
         .then(res => {
           console.log(res);
@@ -218,8 +228,8 @@ describe('testing client lib for registerBlast endpoints', () => {
         });
     });
     it('Should fail because of bad campus key', done => {
-      var c = new client({ url: url, token: testVars.token.pass });
-      c
+      var client = new Client({ url: url, token: testVars.token.pass });
+      client
         .getCampusDetails(testVars.campusKey.fail)
         .then(res => {
           console.log(res);
