@@ -16,9 +16,9 @@ module.exports = {
     },
     invalidCredential: {
       url: 'http://localhost:8000',
-      apiKey: 'invalid',
+      apiKey: 'valid',
       username: 'admin',
-      password: 'password'
+      password: 'pass'
     }
   },
   campusKey: {
