@@ -2,8 +2,21 @@
 
 const qs = require('qs');
 const nock = require('nock');
+const testVars = require('./../data');
+
 const setUpMock = function (url) {
-  //login mocks
+  mockLogin(url);
+  mockCancelAppointment(url);
+  mockGetAppointmentDetails(url);
+  mockGetCampusDetails(url);
+  mockExamGroups(url);
+};
+
+/**
+ * Mock login endpoint
+ * @param {string} url
+ */
+function mockLogin(url) {
   nock(url)
     .persist()
     .post('/login')
@@ -29,7 +42,13 @@ const setUpMock = function (url) {
         }]
       }
     });
-  //cancelAppointment mocks
+}
+
+/**
+ * Mock cancel appointment endpoint
+ * @param {string} url
+ */
+function mockCancelAppointment(url) {
   //success
   nock(url)
     .get('/campus/correctCampusKey/appointments/correctId/cancel')
@@ -52,7 +71,13 @@ const setUpMock = function (url) {
       cancel: 'error',
       message: 'This registration may not be canceled online at this time.'
     });
-  //getAppointmentDetails mock
+}
+
+/**
+ * Mock get appointment details endpoint
+ * @param {string} url
+ */
+function mockGetAppointmentDetails(url) {
   //success
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/correctCampusKey/appointments/correctId')
@@ -91,7 +116,12 @@ const setUpMock = function (url) {
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/correctCampusKey/appointments/wrongId')
     .reply(400, {});
-  //getCampusDetails mock
+}
+/**
+ * Mock get campus details endpoint
+ * @param {string} url
+ */
+function mockGetCampusDetails(url) {
   //success
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/correctCampusKey/properties')
@@ -116,6 +146,18 @@ const setUpMock = function (url) {
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/wrongCampusKey/properties')
     .reply(400, {});
-};
+}
+
+function mockExamGroups(url) {
+  // Success
+  nock(url)
+    .get('/campus/correctCampusKey/groups')
+    .reply(200, testVars.examGroups.correctCampusKey);
+
+  // Invalid campus
+  nock(url)
+    .get('/campus/wrongCampusKey/groups')
+    .reply(200, testVars.examGroups.wrongCampusKey);
+}
 
 module.exports = setUpMock;
