@@ -10,7 +10,7 @@ var assert = require('chai').assert,
 require('./mock')(url);
 describe('testing client lib for registerBlast endpoints', () => {
   describe('Login', function testLogin() {
-    it('Should successfully login and return valid token', function() {
+    it('Should successfully login and return valid token', function () {
       var client = new Client(testVars.config.valid);
 
       return client
@@ -20,7 +20,7 @@ describe('testing client lib for registerBlast endpoints', () => {
         })
     });
 
-    it('Should fail for invalid api key', function() {
+    it('Should fail for invalid api key', function () {
       var client = new Client(testVars.config.invalidApiKey);
 
       return client
@@ -30,7 +30,7 @@ describe('testing client lib for registerBlast endpoints', () => {
         })
     });
 
-    it('Should fail for invalid credentials', function() {
+    it('Should fail for invalid credentials', function () {
       var client = new Client(testVars.config.invalidCredential);
 
       return client
@@ -40,6 +40,37 @@ describe('testing client lib for registerBlast endpoints', () => {
         })
     });
   });
+  describe('Test examGroups method', function () {
+    it('Should successfully return exam groups', () => {
+      const client = new Client(testVars.config.valid);
+      client
+        .getExamGroups(testVars.campusKey.pass)
+        .then(result => {
+          expect(result.to.eql(testVars.examGroups.correctCampusKey));
+        });
+    });
+
+    it('Should fail for client side validation', () => {
+      const client = new Client(testVars.config.valid);
+
+      client
+        .getExamGroups({})
+        .catch(error => {
+          expect(error).to.equal('campusKey should be a string');
+        });
+    });
+
+    it('Should fail for invalid [campusKey]', () => {
+      const client = new Client(testVars.config.valid);
+
+      client
+        .getExamGroups(testVars.campusKey.fail)
+        .catch(error => {
+          expect(error).to.equal(testVars.examGroups.wrongCampusKey);
+        });
+    });
+  });
+
   describe('Should test cancelAppointment method', () => {
     it('Should work correctly', (done) => {
       var client = new Client(testVars.config.valid);
@@ -106,8 +137,8 @@ describe('testing client lib for registerBlast endpoints', () => {
       var client = new Client({ url: url, token: testVars.token.pass });
       client
         .getAppointmentDetails(
-          testVars.campusKey.pass,
-          testVars.appointmentId.pass
+        testVars.campusKey.pass,
+        testVars.appointmentId.pass
         )
         .then(res => {
           var result = JSON.parse(res);
@@ -141,8 +172,8 @@ describe('testing client lib for registerBlast endpoints', () => {
       var client = new Client({ url: url, token: testVars.token.fail });
       client
         .getAppointmentDetails(
-          testVars.campusKey.pass,
-          testVars.appointmentId.pass
+        testVars.campusKey.pass,
+        testVars.appointmentId.pass
         )
         .then(res => {
           console.log(res);
@@ -156,8 +187,8 @@ describe('testing client lib for registerBlast endpoints', () => {
       var client = new Client({ url: url, token: testVars.token.pass });
       client
         .getAppointmentDetails(
-          testVars.campusKey.fail,
-          testVars.appointmentId.pass
+        testVars.campusKey.fail,
+        testVars.appointmentId.pass
         )
         .then(res => {
           console.log(res);
@@ -171,8 +202,8 @@ describe('testing client lib for registerBlast endpoints', () => {
       var client = new Client({ url: url, token: testVars.token.pass });
       client
         .getAppointmentDetails(
-          testVars.campusKey.pass,
-          testVars.appointmentId.fail
+        testVars.campusKey.pass,
+        testVars.appointmentId.fail
         )
         .then(res => {
           console.log(res);

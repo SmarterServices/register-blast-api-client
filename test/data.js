@@ -32,5 +32,37 @@ module.exports = {
   token: {
     pass: 'correctToken',
     fail: 'wrongToken'
+  },
+  examGroups: {
+    correctCampusKey: [
+      {
+        "id": "2196",
+        "name": "CASTLE",
+        "fullname": "CASTLE",
+        "parentid": 0
+      },
+      {
+        "id": "2194",
+        "name": "CLEP",
+        "fullname": "CLEP",
+        "parentid": 0
+      },
+      {
+        "id": "2195",
+        "name": "MAT",
+        "fullname": "MAT",
+        "parentid": 0
+      },
+      {
+        "id": "121568",
+        "name": "SmarterProctoring",
+        "fullname": "SmarterProctoring",
+        "parentid": 0
+      }
+    ],
+    wrongCampusKey: {
+      "success": false,
+      "error": "Invalid Campus"
+    }
   }
 };
