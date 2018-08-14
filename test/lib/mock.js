@@ -8,7 +8,7 @@ var setUpMock = function(url) {
   // bad token
   nock(url, { reqheaders: { authorization: 'Basic wrongToken' } })
     .get('/campus/correctCampusKey/appointments/correctId/cancel')
-    .reply(401, <html></html>);
+    .reply(401, '<html></html>');
   //bad campus key
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/wrongCampusKey/appointments/correctId/cancel')

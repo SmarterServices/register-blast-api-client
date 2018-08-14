@@ -16,6 +16,7 @@ describe('testing client lib for registerBlast endpoints', () => {
       c
         .cancelAppointment(testVars.campusKey.pass, testVars.appointmentId.pass)
         .then(res => {
+          console.log(res)
           var result = JSON.parse(res);
           expect(result).to.have.property('cancel');
           expect(result.cancel).to.equal('success');
