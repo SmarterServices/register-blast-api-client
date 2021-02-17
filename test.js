@@ -1,10 +1,10 @@
 var rb = require('./index');
 
 const registerBlastApiClient = new rb({
-    url: 'https://www-registerblast-com-bmzkax.appdoctor.io/spv2',
-    apiKey: 'm0m0PgmLvYgPSJfDCbckOguvgTyIcH8m',
+    url: 'https://www.registerblast.com/spv2',
+    apiKey: '',
     username: 'jason@smarterservices.com',
-    password: 'R64rjbAX8ctdaFtm!tYw637'
+    password: ''
   });
 
 
