@@ -42,12 +42,11 @@ Thumbs.db
 logs
 *.log
 npm-debug.log*
+
 # Logs
 logs
 *.log
-# Logs
-logs
-*.log
+
 
 # Runtime data
 pids

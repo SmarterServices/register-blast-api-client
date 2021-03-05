@@ -1,14 +1,62 @@
-var nock = require('nock');
-var setUpMock = function(url) {
-  //cancelAppointment mocks
+'use strict';
+
+const qs = require('qs');
+const nock = require('nock');
+const testVars = require('./../data');
+
+const setUpMock = function (url) {
+  mockLogin(url);
+  mockCancelAppointment(url);
+  mockGetAppointmentDetails(url);
+  mockGetCampusDetails(url);
+  mockExamGroups(url);
+};
+
+/**
+ * Mock login endpoint
+ * @param {string} url
+ */
+function mockLogin(url) {
+  nock(url)
+    .persist()
+    .post('/login')
+    .reply(function (url, requestBody) {
+      const body = qs.parse(requestBody)
+      const isValidApiKey = this.req.headers['apikey'] === 'valid';
+      const isValidLogin = body.username === 'admin' && body.password === 'password';
+
+      if (!isValidApiKey) {
+        return [200, {
+          success: false,
+          error: "Invalid client"
+        }]
+      } else if (!isValidLogin) {
+        return [200, {
+          success: false,
+          error: "Invalid login"
+        }]
+      } else {
+        return [200, {
+          success: true,
+          token: 'correctToken'
+        }]
+      }
+    });
+}
+
+/**
+ * Mock cancel appointment endpoint
+ * @param {string} url
+ */
+function mockCancelAppointment(url) {
   //success
-  nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
+  nock(url)
     .get('/campus/correctCampusKey/appointments/correctId/cancel')
-    .reply(200, 'done');
+    .reply(200, { cancel: 'success' });
   // bad token
   nock(url, { reqheaders: { authorization: 'Basic wrongToken' } })
     .get('/campus/correctCampusKey/appointments/correctId/cancel')
-    .reply(401, '<html></html>');
+    .reply(401, { cancel: 'error', message: 'Unexpected' });
   //bad campus key
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/wrongCampusKey/appointments/correctId/cancel')
@@ -23,7 +71,13 @@ var setUpMock = function(url) {
       cancel: 'error',
       message: 'This registration may not be canceled online at this time.'
     });
-  //getAppointmentDetails mock
+}
+
+/**
+ * Mock get appointment details endpoint
+ * @param {string} url
+ */
+function mockGetAppointmentDetails(url) {
   //success
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/correctCampusKey/appointments/correctId')
@@ -62,7 +116,12 @@ var setUpMock = function(url) {
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/correctCampusKey/appointments/wrongId')
     .reply(400, {});
-  //getCampusDetails mock
+}
+/**
+ * Mock get campus details endpoint
+ * @param {string} url
+ */
+function mockGetCampusDetails(url) {
   //success
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/correctCampusKey/properties')
@@ -87,6 +146,18 @@ var setUpMock = function(url) {
   nock(url, { reqheaders: { authorization: 'Basic correctToken' } })
     .get('/campus/wrongCampusKey/properties')
     .reply(400, {});
-};
+}
+
+function mockExamGroups(url) {
+  // Success
+  nock(url)
+    .get('/campus/correctCampusKey/groups')
+    .reply(200, testVars.examGroups.correctCampusKey);
+
+  // Invalid campus
+  nock(url)
+    .get('/campus/wrongCampusKey/groups')
+    .reply(200, testVars.examGroups.wrongCampusKey);
+}
 
 module.exports = setUpMock;
